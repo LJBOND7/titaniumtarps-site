@@ -1,0 +1,10 @@
+# Raw camera originals (only the web-optimized versions are used by the site)
+assets/img/*.jpg
+assets/img/*.jpeg
+assets/img/*.JPG
+assets/img/*.JPEG
+assets/img/*.mov
+assets/img/*.MOV
+assets/render/tower-enclosure@2x.png
+.DS_Store
+assets/img/web/*@2x.png

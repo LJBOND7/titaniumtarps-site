@@ -1,0 +1,8 @@
+# Don't upload the raw camera originals; only the web-optimized versions are used.
+assets/img/*.jpg
+assets/img/*.jpeg
+assets/img/*.JPG
+assets/img/*.JPEG
+assets/img/*.mov
+assets/img/*.MOV
+assets/render/tower-enclosure@2x.png

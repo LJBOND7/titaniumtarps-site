@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;800;900&family=Inter:wght@400;500;600&display=swap');
+  html,body{ margin:0; padding:0; background:#0b0e13; }
+  #stage{ width:1600px; height:1200px; }
+  .h{ font-family:'Archivo',system-ui,sans-serif; }
+  .b{ font-family:'Inter',system-ui,sans-serif; }
+</style>
+</head>
+<body>
+<svg id="stage" width="1600" height="1200" viewBox="0 0 1600 1200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0e4f84"/><stop offset="0.45" stop-color="#3f8cc0"/>
+      <stop offset="0.8" stop-color="#9fcbe6"/><stop offset="1" stop-color="#d7ebf6"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.84" cy="0.10" r="0.5">
+      <stop offset="0" stop-color="#fff8e8" stop-opacity="0.85"/><stop offset="1" stop-color="#fff8e8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c4cdd4"/><stop offset="1" stop-color="#9aa6af"/>
+    </linearGradient>
+    <linearGradient id="glassGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#34546d"/><stop offset="0.5" stop-color="#6b97b4"/><stop offset="1" stop-color="#284558"/>
+    </linearGradient>
+    <linearGradient id="glassV" x1="0" y1="0" x2="0.18" y2="1">
+      <stop offset="0" stop-color="#8fb4ce"/><stop offset="0.5" stop-color="#547f9d"/><stop offset="1" stop-color="#2f536c"/>
+    </linearGradient>
+    <pattern id="grid" width="34" height="15" patternUnits="userSpaceOnUse">
+      <rect x="0" y="10.6" width="34" height="4.4" fill="#162937" opacity="0.5"/>
+      <line x1="0.5" y1="0" x2="0.5" y2="15" stroke="#152634" stroke-width="0.9" stroke-opacity="0.55"/>
+      <line x1="0" y1="0.4" x2="34" y2="0.4" stroke="#16293a" stroke-width="0.5" stroke-opacity="0.28"/>
+    </pattern>
+    <linearGradient id="filmGrad" x1="0" y1="0" x2="0.15" y2="1">
+      <stop offset="0" stop-color="#fcfdff"/><stop offset="1" stop-color="#dfe8ef"/>
+    </linearGradient>
+    <linearGradient id="sheen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0"/><stop offset="0.38" stop-color="#ffffff" stop-opacity="0.55"/><stop offset="0.62" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="seams" width="40" height="12" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="12" stroke="#b9c3cb" stroke-width="1.5"/>
+      <line x1="1.7" y1="0" x2="1.7" y2="12" stroke="#ffffff" stroke-width="1"/>
+    </pattern>
+    <pattern id="filmfloors" width="12" height="15" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0.5" x2="12" y2="0.5" stroke="#c2ccd3" stroke-width="0.7" stroke-opacity="0.55"/>
+    </pattern>
+    <filter id="filmtex" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.03" numOctaves="3" seed="11" result="n"/>
+      <feColorMatrix in="n" type="saturate" values="0"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.12"/></feComponentTransfer>
+    </filter>
+    <filter id="bshadow" x="-40%" y="-10%" width="180%" height="130%">
+      <feDropShadow dx="-20" dy="14" stdDeviation="26" flood-color="#0a2233" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+
+  <!-- Sky -->
+  <rect width="1600" height="1200" fill="url(#sky)"/>
+  <rect width="1600" height="1200" fill="url(#sun)"/>
+  <g opacity="0.16" fill="#2b566f">
+    <rect x="120" y="930" width="60" height="160"/><rect x="190" y="900" width="42" height="190"/>
+    <rect x="250" y="955" width="70" height="135"/><rect x="1200" y="910" width="52" height="180"/>
+    <rect x="1262" y="945" width="66" height="145"/><rect x="1342" y="885" width="46" height="205"/>
+    <rect x="1402" y="935" width="80" height="155"/>
+  </g>
+  <rect x="0" y="1080" width="1600" height="120" fill="url(#ground)"/>
+  <ellipse cx="772" cy="1090" rx="250" ry="22" fill="#6f7c86" opacity="0.45"/>
+
+  <!-- Tower crane -->
+  <g stroke="#586571" stroke-width="2.4" fill="none" opacity="0.95">
+    <line x1="936" y1="58" x2="936" y2="300"/><line x1="942" y1="58" x2="942" y2="300"/>
+    <line x1="936" y1="86" x2="942" y2="68"/><line x1="936" y1="114" x2="942" y2="96"/>
+    <line x1="936" y1="142" x2="942" y2="124"/><line x1="936" y1="170" x2="942" y2="152"/>
+    <line x1="936" y1="198" x2="942" y2="180"/><line x1="936" y1="226" x2="942" y2="208"/>
+    <line x1="936" y1="254" x2="942" y2="236"/><line x1="936" y1="282" x2="942" y2="264"/>
+    <line x1="612" y1="90" x2="986" y2="90"/>
+    <line x1="624" y1="99" x2="972" y2="99"/>
+    <line x1="939" y1="54" x2="624" y2="90"/><line x1="939" y1="54" x2="972" y2="90"/><line x1="939" y1="54" x2="939" y2="90"/>
+  </g>
+  <rect x="962" y="92" width="26" height="16" rx="2" fill="#54616d" stroke="#3f4a54" stroke-width="1.5"/>
+
+  <!-- ===== Building (slender supertall) ===== -->
+  <g filter="url(#bshadow)">
+    <polygon points="660,110 880,110 926,144 706,144" fill="#cfd7de"/>
+    <polygon points="660,110 880,110 926,144 706,144" fill="none" stroke="#9aa6af" stroke-width="1"/>
+    <polygon points="880,110 926,144 926,1046 880,1080" fill="url(#glassGrad)"/>
+    <polygon points="880,110 926,144 926,1046 880,1080" fill="#0a1c29" opacity="0.34"/>
+    <rect x="660" y="110" width="220" height="970" fill="#b7c0c9"/>
+  </g>
+
+  <!-- upper glazed -->
+  <rect x="660" y="110" width="220" height="450" fill="url(#glassV)"/>
+  <rect x="660" y="110" width="220" height="450" fill="url(#grid)"/>
+  <rect x="660" y="110" width="220" height="450" fill="url(#sheen)" opacity="0.5"/>
+  <!-- lower glazed -->
+  <rect x="660" y="700" width="220" height="380" fill="url(#glassV)"/>
+  <rect x="660" y="700" width="220" height="380" fill="url(#grid)"/>
+  <rect x="660" y="700" width="220" height="380" fill="url(#sheen)" opacity="0.5"/>
+
+  <!-- Film band -->
+  <polygon points="880,560 926,562 926,693 880,700" fill="url(#filmGrad)"/>
+  <polygon points="880,560 926,562 926,693 880,700" fill="#0a1c29" opacity="0.18"/>
+  <g>
+    <rect x="660" y="560" width="220" height="140" fill="url(#filmGrad)"/>
+    <rect x="660" y="560" width="220" height="140" fill="url(#filmfloors)"/>
+    <rect x="660" y="560" width="220" height="140" fill="url(#seams)"/>
+    <rect x="660" y="560" width="220" height="140" fill="#7f8b94" filter="url(#filmtex)"/>
+    <rect x="660" y="560" width="220" height="140" fill="url(#sheen)"/>
+    <rect x="660" y="560" width="220" height="7" fill="#9aa6af" opacity="0.5"/>
+    <rect x="660" y="693" width="220" height="7" fill="#8a96a0" opacity="0.55"/>
+    <rect x="660" y="560" width="220" height="140" fill="none" stroke="#aeb9c1" stroke-width="1.2"/>
+  </g>
+
+  <rect x="660" y="110" width="220" height="970" fill="none" stroke="#7d8993" stroke-width="1.4"/>
+
+  <!-- hook line + film roll -->
+  <line x1="770" y1="99" x2="770" y2="552" stroke="#586571" stroke-width="1.5" opacity="0.9"/>
+  <g transform="translate(748,540)">
+    <rect x="0" y="0" width="44" height="19" rx="9" fill="#fcfdff" stroke="#aeb9c1" stroke-width="1.3"/>
+    <ellipse cx="44" cy="9.5" rx="5" ry="9.5" fill="#e6edf2" stroke="#aeb9c1" stroke-width="1.3"/>
+  </g>
+
+  <!-- ===== Annotations ===== -->
+  <g stroke="#1c6491" stroke-width="2" fill="none">
+    <path d="M882,300 H1040"/><path d="M926,628 H1044"/><path d="M882,900 H1040"/>
+  </g>
+  <g fill="#1c6491"><circle cx="882" cy="300" r="4.5"/><circle cx="926" cy="628" r="4.5"/><circle cx="882" cy="900" r="4.5"/></g>
+
+  <g>
+    <rect x="1040" y="262" width="486" height="78" rx="12" fill="#ffffff" opacity="0.92"/>
+    <text class="h" x="1062" y="292" font-size="19" font-weight="800" letter-spacing="2" fill="#1c6491">GLAZING COMPLETE</text>
+    <text class="b" x="1062" y="320" font-size="20" fill="#23323d">Upper floors enclosed and weather-tight.</text>
+  </g>
+
+  <g>
+    <rect x="1040" y="476" width="500" height="252" rx="14" fill="#ffffff" opacity="0.96"/>
+    <rect x="1040" y="476" width="6" height="252" rx="3" fill="#2f93cf"/>
+    <text class="h" x="1066" y="514" font-size="22" font-weight="900" letter-spacing="0.5" fill="#0e2233">TITANIUM TARPS ENCLOSURE</text>
+    <text class="h" x="1066" y="542" font-size="14" font-weight="700" letter-spacing="2" fill="#2f93cf">80 STORIES. ONE LEVEL EVERY 3 DAYS.</text>
+    <text class="b" x="1066" y="578" font-size="19" fill="#23323d"><tspan x="1066" dy="0">At that pace, a glazing slip strands freshly</tspan><tspan x="1066" dy="27">finished floors in days. We seal the open facade</tspan><tspan x="1066" dy="27">between the slabs with patented film, so fit-out</tspan><tspan x="1066" dy="27">crews keep working dry while the windows catch up.</tspan></text>
+  </g>
+
+  <g>
+    <rect x="1040" y="864" width="486" height="78" rx="12" fill="#ffffff" opacity="0.92"/>
+    <text class="h" x="1062" y="894" font-size="19" font-weight="800" letter-spacing="2" fill="#1c6491">LOWER FLOORS ENCLOSED</text>
+    <text class="b" x="1062" y="922" font-size="20" fill="#23323d">Glazing installed up to the enclosure line.</text>
+  </g>
+
+  <!-- ===== Header + Title ===== -->
+  <text class="h" x="72" y="74" font-size="17" font-weight="700" letter-spacing="3" fill="#bfe6fb">PREPARED FOR MOSS CONSTRUCTION  ·  CIPRIANI RESIDENCES MIAMI</text>
+  <text class="h" x="70" y="148" font-size="60" font-weight="900" fill="#ffffff" letter-spacing="-1">When the glass is late,</text>
+  <text class="h" x="70" y="214" font-size="60" font-weight="900" fill="#bfe6fb" letter-spacing="-1">keep building.</text>
+  <text class="b" x="74" y="256" font-size="22" fill="#eaf4fb">Titanium Tarps temporary facade enclosure for high-rise construction.</text>
+
+  <!-- logo + caption -->
+  <image href="/assets/logo/logo-oficial.png" x="70" y="1112" width="250" height="62"/>
+  <text class="b" x="1526" y="1158" font-size="16" fill="#3a4a55" text-anchor="end">Representative illustration of a Cipriani-scale supertall (80 stories), Brickell. Not an as-built drawing.</text>
+</svg>
+</body>
+</html>
