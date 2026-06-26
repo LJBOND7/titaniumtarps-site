@@ -96,7 +96,7 @@
         note.classList.add("is-ok");
       }
       window.location.href =
-        `mailto:info@titaniumtarps.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        `mailto:info@titarps.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
   }
 
