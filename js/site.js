@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
   /* ---- Sticky nav state ---- */
   const nav = document.getElementById("nav");
   const onScroll = () => {
@@ -23,9 +25,161 @@
   burger.addEventListener("click", () => toggleMenu());
   menu.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => toggleMenu(false)));
 
+  /* ---- Duplicate ticker content for a seamless loop ---- */
+  const tickerTrack = document.getElementById("tickerTrack");
+  if (tickerTrack) tickerTrack.innerHTML += tickerTrack.innerHTML;
+
+  /* ==============================================================
+     Comparison slider core: an invisible range input drives --p
+     (works for mouse drag, touch, and keyboard arrows)
+     ============================================================== */
+  function wireCompare(root, range, onInput) {
+    const setP = (val) => {
+      const p = Math.min(100, Math.max(0, val));
+      root.style.setProperty("--p", p + "%");
+      if (onInput) onInput(p);
+      return p;
+    };
+    range.addEventListener("input", () => setP(parseFloat(range.value)));
+
+    // Direct pointer drag anywhere on the frame (nicer than the thin native thumb)
+    const fromEvent = (e) => {
+      const rect = root.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const p = setP((x / rect.width) * 100);
+      range.value = p;
+    };
+    let dragging = false;
+    root.addEventListener("pointerdown", (e) => {
+      dragging = true;
+      root.setPointerCapture(e.pointerId);
+      fromEvent(e);
+    });
+    root.addEventListener("pointermove", (e) => { if (dragging) fromEvent(e); });
+    root.addEventListener("pointerup", () => { dragging = false; });
+    root.addEventListener("pointercancel", () => { dragging = false; });
+
+    return setP;
+  }
+
+  /* ---- Gallery before/after sliders ---- */
+  document.querySelectorAll("[data-ba]").forEach((ba) => {
+    const range = ba.querySelector(".ba__range");
+    const setP = wireCompare(ba, range, null);
+    setP(parseFloat(range.value));
+  });
+
+  /* ==============================================================
+     Hero "seal" sequence:
+     1. film sheet drifts down over the damaged roof
+     2. the after photo wipes across with a shimmer edge
+     3. handle appears; the demo becomes a draggable comparator
+     ============================================================== */
+  const seal = document.getElementById("heroSeal");
+  if (seal) {
+    const frame = document.getElementById("sealFrame");
+    const range = document.getElementById("sealRange");
+    const hint = document.getElementById("sealHint");
+    const replay = document.getElementById("sealReplay");
+    const tagBefore = document.getElementById("tagBefore");
+    const tagAfter = document.getElementById("tagAfter");
+
+    // --p is the before/after boundary: left of it is the storm, right of it is sealed
+    const setTags = (p) => {
+      tagAfter.classList.toggle("is-active", p <= 45);
+      tagAfter.classList.toggle("is-dim", p >= 92);
+      tagBefore.classList.toggle("is-dim", p <= 8);
+    };
+    const setP = wireCompare(frame, range, setTags);
+
+    let animating = false;
+    let rafId = 0;
+
+    const animateTo = (from, to, dur, done) => {
+      const start = performance.now();
+      const step = (now) => {
+        const t = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        const p = from + (to - from) * eased;
+        range.value = p;
+        setP(p);
+        if (t < 1) rafId = requestAnimationFrame(step);
+        else if (done) done();
+      };
+      rafId = requestAnimationFrame(step);
+    };
+
+    const finish = () => {
+      seal.classList.remove("is-wiping", "is-dropping");
+      seal.classList.add("is-ready");
+      animating = false;
+      hint.textContent = "Drag to compare before and after";
+    };
+
+    const runSequence = () => {
+      if (animating) return;
+      animating = true;
+      cancelAnimationFrame(rafId);
+      seal.classList.remove("is-ready");
+      hint.textContent = "Sealing the roof…";
+      setP(100);
+      range.value = 100;
+
+      if (reducedMotion) {
+        setP(50);
+        range.value = 50;
+        finish();
+        return;
+      }
+
+      // Phase 1: the film sheet floats down onto the damage
+      seal.classList.add("is-dropping");
+      setTimeout(() => {
+        // Phase 2: wipe to the sealed roof, right to left
+        seal.classList.add("is-wiping");
+        animateTo(100, 0, 2100, () => {
+          // Phase 3: hold the full seal, then ease back so the handle is grabbable
+          setTimeout(() => {
+            seal.classList.remove("is-wiping", "is-dropping");
+            animateTo(0, 38, 750, finish);
+          }, 600);
+        });
+      }, 1250);
+    };
+
+    // Kick off once the hero demo is actually visible and the after image is loaded
+    const afterImg = seal.querySelector(".seal__after");
+    const armed = () => {
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              io.disconnect();
+              setTimeout(runSequence, 500);
+            }
+          });
+        }, { threshold: 0.4 });
+        io.observe(seal);
+      } else {
+        setTimeout(runSequence, 800);
+      }
+    };
+    if (afterImg.complete) armed();
+    else afterImg.addEventListener("load", armed, { once: true });
+
+    replay.addEventListener("click", runSequence);
+
+    // A manual drag cancels the auto animation
+    frame.addEventListener("pointerdown", () => {
+      if (!animating) return;
+      cancelAnimationFrame(rafId);
+      finish();
+    });
+  }
+
   /* ---- Scroll reveal ---- */
   const revealTargets = document.querySelectorAll(
-    ".exposure__sticky, .vs, .app, .scenario__visual, .scenario__copy, .wcard, .stat, .patent-grid li, .proj, .proj-feature, .coverage__list li, .contact__copy, .contact__form"
+    ".exposure__sticky, .vs, .proof, .svc, .ba-item, .scenario__visual, .scenario__copy, .wcard, .stat, .proj, .proj-feature, .coverage__list li, .qa, .contact__copy, .contact__form"
   );
   revealTargets.forEach((el) => el.classList.add("reveal"));
   if ("IntersectionObserver" in window) {
@@ -75,21 +229,29 @@
     counters.forEach((el) => co.observe(el));
   }
 
+  /* ---- FAQ: close the others when one opens ---- */
+  const qas = document.querySelectorAll(".qa");
+  qas.forEach((qa) => {
+    qa.addEventListener("toggle", () => {
+      if (qa.open) qas.forEach((other) => { if (other !== qa) other.open = false; });
+    });
+  });
+
   /* ---- Contact form: mailto fallback so it works on any static host ---- */
   const form = document.getElementById("assessmentForm");
   if (form) {
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const v = (id) => (document.getElementById(id)?.value || "").trim();
-      const subject = `Site assessment request: ${v("project") || "new project"}`;
+      const subject = `Rapid response request: ${v("project") || "new project"}`;
       const body =
         `Name: ${v("name")}\n` +
         `Company: ${v("company")}\n` +
         `Role: ${v("role")}\n` +
-        `Project: ${v("project")}\n` +
+        `Building / project: ${v("project")}\n` +
         `Phone: ${v("phone")}\n` +
         `Email: ${v("email")}\n\n` +
-        `Scope & timeline:\n${v("message")}\n`;
+        `Damage & timeline:\n${v("message")}\n`;
       const note = form.querySelector(".form-note");
       if (note) {
         note.textContent = "Opening your email to send. If nothing opens, call 305-434-0444.";
@@ -99,9 +261,4 @@
         `mailto:info@titarps.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     });
   }
-
-  /* ---- Year (footer) ---- */
-  document.querySelectorAll("[data-year]").forEach((el) => {
-    el.textContent = new Date().getFullYear().toString();
-  });
 })();
