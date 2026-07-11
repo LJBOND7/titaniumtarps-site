@@ -177,9 +177,50 @@
     });
   }
 
+  /* ==============================================================
+     Before / during / after phase player: auto-crossfade + dot control
+     ============================================================== */
+  document.querySelectorAll("[data-phase]").forEach((root) => {
+    const imgs = Array.from(root.querySelectorAll(".phase__img"));
+    const dots = Array.from(root.querySelectorAll(".phase__dots button"));
+    const label = root.querySelector("[data-phase-label]");
+    if (!imgs.length) return;
+    const names = ["Before", "During", "After"];
+    let idx = 0;
+    let timer = 0;
+    const interval = parseInt(root.dataset.interval || "2200", 10);
+
+    const show = (i) => {
+      idx = (i + imgs.length) % imgs.length;
+      imgs.forEach((im, n) => im.classList.toggle("is-on", n === idx));
+      dots.forEach((d, n) => d.classList.toggle("is-active", n === idx));
+      if (label) label.textContent = names[idx] || `Stage ${idx + 1}`;
+    };
+    const stop = () => { clearInterval(timer); timer = 0; };
+    const play = () => {
+      if (reducedMotion || timer) return;
+      timer = setInterval(() => show(idx + 1), interval);
+    };
+
+    dots.forEach((d, n) => d.addEventListener("click", () => { stop(); show(n); }));
+    root.addEventListener("mouseenter", stop);
+    root.addEventListener("mouseleave", play);
+
+    if (reducedMotion) { show(imgs.length - 1); }
+    else {
+      show(0);
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((entries) => {
+          entries.forEach((e) => (e.isIntersecting ? play() : stop()));
+        }, { threshold: 0.4 });
+        io.observe(root);
+      } else { play(); }
+    }
+  });
+
   /* ---- Scroll reveal ---- */
   const revealTargets = document.querySelectorAll(
-    ".exposure__sticky, .vs, .proof, .svc, .ba-item, .scenario__visual, .scenario__copy, .wcard, .stat, .proj, .proj-feature, .coverage__list li, .qa, .contact__copy, .contact__form"
+    ".exposure__sticky, .vs, .proof, .svc, .ba-item, .phase, .scenario__visual, .scenario__copy, .govsec__copy, .govsec__visual, .interior__video, .interior__copy, .wcard, .stat, .prod-hero, .prod, .proj, .proj-feature, .coverage__list li, .qa, .contact__copy, .contact__form"
   );
   revealTargets.forEach((el) => el.classList.add("reveal"));
   if ("IntersectionObserver" in window) {
