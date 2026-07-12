@@ -537,7 +537,7 @@ section{ position:relative; }
   padding:14px 6px; background:var(--ink); border:1px solid var(--line); border-radius:12px;
   border-bottom:3px solid var(--blue-deep); white-space:nowrap;
 }
-.prod-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:18px; }
+.prod-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:18px; }
 .prod{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:30px 28px; transition:transform .2s ease, border-color .2s ease, background .2s ease; }
 .prod:hover{ transform:translateY(-4px); border-color:rgba(47,147,207,.55); background:var(--panel-2); }
 .prod__icon{ width:52px; height:52px; margin-bottom:18px; color:var(--blue-bright); background:rgba(47,147,207,.10); border:1px solid rgba(47,147,207,.3); border-radius:13px; display:grid; place-items:center; }
