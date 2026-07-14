@@ -424,6 +424,7 @@ section{ position:relative; }
 .faq__inner > div:first-child{ position:sticky; top:96px; }
 .faq__call{ color:var(--blue-light); font-weight:700; }
 .faq__call:hover{ text-decoration:underline; }
+.faq__media{ margin-top:clamp(28px, 5vh, 48px); width:100%; border-radius:18px; border:1px solid var(--line); box-shadow:0 34px 80px -42px rgba(0,0,0,.85); }
 .faq__list{ display:flex; flex-direction:column; gap:12px; }
 .qa{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
 .qa[open]{ border-color:rgba(47,147,207,.45); }
