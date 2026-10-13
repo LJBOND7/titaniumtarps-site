@@ -131,7 +131,8 @@
   ]
 }
 </script>
-<style>.chinook-field-feature{display:grid;grid-template-columns:1fr 1.6fr;gap:36px;align-items:center;padding:32px;margin-top:22px;border:1px solid #36526a;border-radius:16px;background:linear-gradient(120deg,#132638,#0b151f)}.chinook-field-feature h3{font-family:Archivo,Arial,sans-serif;font-size:clamp(26px,3vw,40px);letter-spacing:-.04em;line-height:1.1;margin:13px 0 18px;color:#edf5fc}.chinook-field-feature p:not(.eyebrow){font-size:14px;line-height:1.7;color:#b7c9d9}.chinook-field-feature span{display:block;margin-top:19px;font-size:10px;letter-spacing:.04em;color:#9fbdd4}.chinook-field-feature video{width:100%;aspect-ratio:16/9;display:block;object-fit:contain;background:#050c13;border:1px solid #405b70;border-radius:9px}@media(max-width:760px){.chinook-field-feature{display:flex;flex-direction:column;align-items:stretch;padding:24px;gap:24px}.chinook-field-feature p:not(.eyebrow){font-size:13px}}</style>
+
+<link rel="stylesheet" href="titarps-story.css?v=20261013-story"><script defer src="titarps-story.js?v=20261013-story"></script>
 </head>
 <body>
 
@@ -740,29 +741,13 @@
     </ul>
   </div>
 
-  <figure class="proof container" style="margin-top:clamp(40px,6vh,72px);">
-    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:14px;">
-      <div style="position:relative; border-radius:16px; overflow:hidden; aspect-ratio:3/4; border:1px solid var(--line-dark);">
-        <img src="assets/img/web/crew-charter-jet.jpg" alt="Titanium Tarps crew loading materials onto a chartered jet at sunset to reach a storm zone" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy" decoding="async">
-        <span style="position:absolute; left:12px; bottom:12px; z-index:1; font-family:var(--f-head,'Bricolage Grotesque',sans-serif); font-weight:700; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:#fff; text-shadow:0 2px 12px rgba(0,0,0,.85);">By chartered jet</span>
-      </div>
-      <div style="position:relative; border-radius:16px; overflow:hidden; aspect-ratio:3/4; border:1px solid var(--line-dark);">
-        <img src="assets/img/web/crew-small-plane.jpg" alt="Titanium Tarps crew loading membrane and lumber into a small plane at a private jet center" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy" decoding="async">
-        <span style="position:absolute; left:12px; bottom:12px; z-index:1; font-family:var(--f-head,'Bricolage Grotesque',sans-serif); font-weight:700; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:#fff; text-shadow:0 2px 12px rgba(0,0,0,.85);">By small plane</span>
-      </div>
-      <div style="position:relative; border-radius:16px; overflow:hidden; aspect-ratio:3/4; border:1px solid var(--line-dark);">
-        <img src="assets/img/web/crew-response-boat.jpg" alt="Titanium Tarps crew crossing open water by boat to reach a storm-hit island" style="width:100%; height:100%; object-fit:cover; display:block;" loading="lazy" decoding="async">
-        <span style="position:absolute; left:12px; bottom:12px; z-index:1; font-family:var(--f-head,'Bricolage Grotesque',sans-serif); font-weight:700; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase; color:#fff; text-shadow:0 2px 12px rgba(0,0,0,.85);">By boat</span>
-      </div>
-    </div>
-    <div class="chinook-field-feature">
-      <div><p class="eyebrow eyebrow--white">By Chinook</p><h3>Whatever it takes<br>to get there.</h3><p>From the aircraft ramp to the flight over Sanibel. Watch a short look at the people, materials, and journey behind the response.</p><span>Sanibel, Florida · Original field footage</span></div>
-      <video controls playsinline preload="none" poster="sanibel-chinook-poster.jpg" aria-label="Silent 26-second Chinook deployment footage from Sanibel"><source src="sanibel-chinook.mp4" type="video/mp4">Your browser cannot play this video. <a href="sanibel-chinook.mp4">Watch the Sanibel deployment</a>.</video>
-    </div>
-    <figcaption style="margin-top:16px;"><strong>By chartered jet. By small plane. By boat. By Chinook.</strong> When disaster strikes, we find a way to get our crews and materials where they need to go.</figcaption>
-  </figure>
+<section class="tt-story tt-journey" data-journey aria-label="How we get there"><div class="tt-journey-copy"><p class="tt-kicker">WHATEVER IT TAKES TO GET THERE</p><h2>When you need us,<br><span>we find a way.</span></h2><p>By chartered jet. By small plane. By boat. Even by Chinook. The journey is part of the job.</p><div class="tt-journey-controls" role="group" aria-label="Choose a travel slide"><button type="button" data-travel="0" aria-pressed="true" aria-label="Show Jet">Jet</button><button type="button" data-travel="1" aria-pressed="false" aria-label="Show Plane">Plane</button><button type="button" data-travel="2" aria-pressed="false" aria-label="Show Boat">Boat</button><button type="button" data-travel="3" aria-pressed="false" aria-label="Show Chinook">Chinook</button><button type="button" class="tt-pause" data-travel-pause aria-pressed="false">Pause story</button></div><p class="tt-journey-status" data-travel-status role="status">FOUR WAYS TO REACH YOU · ONE COMMITMENT</p></div><div class="tt-journey-stage"><figure class="tt-travel-slide is-active" aria-hidden="false"><img src="assets/img/web/crew-charter-jet.jpg" alt="Crew and materials beside a chartered jet" loading="lazy" decoding="async"><figcaption><small>01 / THE RESPONSE</small><strong>By chartered jet.</strong></figcaption></figure><figure class="tt-travel-slide" aria-hidden="true"><img src="assets/img/web/crew-small-plane.jpg" alt="Loading a small plane with materials" loading="lazy" decoding="async"><figcaption><small>02 / THE RESPONSE</small><strong>By small plane.</strong></figcaption></figure><figure class="tt-travel-slide" aria-hidden="true"><img src="assets/img/web/crew-response-boat.jpg" alt="The crew traveling by boat" loading="lazy" decoding="async"><figcaption><small>03 / THE RESPONSE</small><strong>By boat.</strong></figcaption></figure><figure class="tt-travel-slide" aria-hidden="true"><img src="sanibel-chinook-poster.jpg" alt="Chinook helicopter with its loading ramp open in Sanibel" loading="lazy" decoding="async"><figcaption><small>04 / WHATEVER IT TAKES</small><strong>Even by Chinook.</strong></figcaption></figure></div></section>
+<section class="tt-story tt-promise" aria-label="What we protect"><p class="tt-kicker">WE WILL PROTECT WHAT MATTERS TO YOU</p><p>Your <strong>project.</strong> Your <strong>equipment.</strong><br>Your <strong>business.</strong> Your <strong>home.</strong></p></section>
 </section>
 
+
+<div class="tt-projects-wrap"><section class="tt-story tt-scaffold" aria-labelledby="scaffold-heading"><div class="tt-section-head"><div><p class="tt-kicker">SCAFFOLDING / THE TRANSFORMATION</p><h2 id="scaffold-heading">Before. During.<br><span>Protected.</span></h2></div><p>Follow the same structure from open scaffolding, through installation, to a finished enclosure.</p></div><div class="tt-scaffold-grid"><figure><img src="scaffold-before.jpg" alt="Open scaffolding around a waterfront industrial structure" loading="lazy" decoding="async"><figcaption><small>01 / BEFORE</small><h3>Open to the elements.</h3><p>The scaffold is in place. The work area is still exposed.</p></figcaption></figure><figure><img src="scaffold-during.jpg" alt="White membrane being installed around the scaffold with its upper section still open" loading="lazy" decoding="async"><figcaption><small>02 / DURING</small><h3>Protection takes shape.</h3><p>Membrane covers the scaffold as the enclosure comes together.</p></figcaption></figure><figure><img src="scaffold-after.jpg" alt="Completed white membrane enclosure around the waterfront scaffold" loading="lazy" decoding="async"><figcaption><small>03 / AFTER</small><h3>Enclosed for the work ahead.</h3><p>The same structure, now surrounded by a continuous enclosure.</p></figcaption></figure></div><p class="tt-project-credit">Original project photography · Titanium Tarps / Structural Wrap team experience</p></section>
+<section class="tt-story tt-stadium" aria-labelledby="stadium-heading"><figure class="tt-stadium-frame"><img src="assets/img/web/stadium.jpg" alt="White membrane enclosing the Inter Miami CF Stadium stands during construction" width="1284" height="777" loading="lazy" decoding="async"><figcaption><p class="tt-kicker">PROJECT SPOTLIGHT / INTER MIAMI CF STADIUM</p><h2 id="stadium-heading">Protection on<br>a bigger stage.</h2><p>Construction enclosure at Inter Miami CF Stadium. Protecting the work while the stadium takes shape.</p></figcaption></figure></section></div>
 
 <!-- ========== Section: Projects / proof ========== -->
 <section class="projects" id="projects">
@@ -774,9 +759,6 @@
       your board, and your procurement file that the building is protected.
     </p>
 
-    <div class="proj-feature">
-      <img src="assets/img/web/stadium.jpg" alt="Titanium Tarps white enclosure film on the Inter Miami CF stadium canopy during construction" loading="lazy" decoding="async">
-      <div class="proj-feature__tag">Inter Miami CF Stadium · Miami, Florida</div>
     </div>
 
     <div class="proj-grid">
@@ -801,6 +783,8 @@
     </div>
   </div>
 </section>
+<div class="tt-projects-wrap"><section class="tt-story tt-home-film" aria-labelledby="home-film-heading"><div class="tt-home-film-grid"><div><p class="tt-kicker">BEHIND THE RESPONSE / SANIBEL</p><h2 id="home-film-heading">From the field.</h2><p>Chinooks on the ground. Materials at the ramp. A flight over Sanibel. Watch the journey behind the response.</p><small>Original field footage · 26 seconds · silent edit</small></div><video controls playsinline preload="none" poster="sanibel-chinook-poster.jpg" aria-label="Silent 26-second Sanibel deployment film"><source src="sanibel-chinook.mp4" type="video/mp4">Your browser cannot play this video. <a href="sanibel-chinook.mp4">Watch the Sanibel deployment</a>.</video></div></section></div>
+
 
 
 <!-- ========== Section: FAQ ========== -->
