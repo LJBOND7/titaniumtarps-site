@@ -11,7 +11,7 @@ let opener;
 function openDialog(dialog,source){opener=source;dialog.showModal();document.body.style.overflow='hidden'}
 document.querySelectorAll('[data-share]').forEach(btn=>btn.addEventListener('click',()=>openDialog($('#share-dialog'),btn)));
 document.querySelectorAll('[data-connect]').forEach(btn=>btn.addEventListener('click',()=>openDialog($('#connect-dialog'),btn)));
-document.querySelectorAll('[data-film]').forEach(btn=>btn.addEventListener('click',()=>{openDialog($('#film-dialog'),btn);const video=$('#field-video');if(!video.getAttribute('src'))video.src='sanibel-chinook.mp4';video.play().catch(()=>{});}));
+document.querySelectorAll('[data-film]').forEach(btn=>btn.addEventListener('click',()=>{openDialog($('#film-dialog'),btn);const video=$('#field-video');if(!video.getAttribute('src'))video.src=video.dataset.src;video.play().catch(()=>{});}));
 document.querySelectorAll('dialog').forEach(dialog=>{dialog.querySelector('[data-close]').addEventListener('click',()=>dialog.close());dialog.addEventListener('close',()=>{dialog.querySelectorAll('video').forEach(v=>v.pause());document.body.style.overflow='';opener?.focus()});dialog.addEventListener('click',event=>{if(event.target===dialog){const r=dialog.getBoundingClientRect();if(event.clientX<r.left||event.clientX>r.right||event.clientY<r.top||event.clientY>r.bottom)dialog.close()}})});
 async function copyCard(){try{await navigator.clipboard.writeText(cardUrl);$('#share-status').textContent='Link copied. Ready to share.'}catch{$('#share-status').textContent='Copy this link: '+cardUrl}}
 $('#copy').addEventListener('click',copyCard);

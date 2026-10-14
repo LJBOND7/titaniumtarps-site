@@ -16,3 +16,6 @@
 
 /* Two-axis direct manipulation is confined to the 3D stage. */
 .model{touch-action:none}.model-controls{flex-wrap:wrap;gap:6px;padding-left:12px;padding-right:12px}.model-controls button{padding:10px 11px}.model-note{flex-wrap:wrap}.callout{max-width:85%}#model-label{font-size:9px}@media(max-width:370px){.model-controls button{font-size:9px;padding:9px 8px}}
+
+/* Preserve the full field film’s original 4:3 framing. */
+.film-preview{aspect-ratio:4/3}#field-video{aspect-ratio:4/3;object-fit:contain}
