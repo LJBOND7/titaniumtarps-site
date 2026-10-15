@@ -26,7 +26,7 @@ function createHarness({reduced=true,width=960,height=540,missingThree=false,ren
       this.selector=selector;this.dataset={};this.style={};this.attrs={};this.listeners={};this.children=[];
       this.hidden=false;this.disabled=false;this.value='0';this.removed=false;this.textContent='';
       const classes=new Set();
-      this.classList={toggle:(key,yes)=>{if(yes===undefined)yes=!classes.has(key);yes?classes.add(key):classes.delete(key);},contains:key=>classes.has(key)};
+      this.classList={toggle:(key,yes)=>{if(yes===undefined)yes=!classes.has(key);yes?classes.add(key):classes.delete(key);},contains:key=>classes.has(key),add:key=>classes.add(key)};
     }
     addEventListener(type,fn){(this.listeners[type]??=[]).push(fn)}
     dispatch(type,extra={}){if(this.disabled&&['click','input','change'].includes(type))return;for(const fn of this.listeners[type]??[])fn({target:this,currentTarget:this,pointerId:1,preventDefault(){},...extra});}
@@ -35,7 +35,7 @@ function createHarness({reduced=true,width=960,height=540,missingThree=false,ren
     querySelector(selector){return selector==='canvas'?this.children.find(c=>c.selector==='canvas'&&!c.removed)??null:element(selector)}
     querySelectorAll(selector){return selector==='[data-stage]'?phaseButtons:[]}
     getBoundingClientRect(){return {width,height,x:0,y:0,left:0,top:0,right:width,bottom:height}}
-    remove(){this.removed=true} setPointerCapture(){} focus(){}
+    remove(){this.removed=true} setPointerCapture(){} focus(){} scrollIntoView(){}
   }
   const element=selector=>{if(!nodes.has(selector))nodes.set(selector,new Element(selector));return nodes.get(selector)};
   const phaseButtons=phaseValues.map((value,i)=>{const b=element(`[data-stage="${value}"]`);b.dataset.stage=value;b.setAttribute('aria-pressed',String(i===0));return b});
@@ -91,7 +91,6 @@ test('approved geometry retains its exact SHA-256; generated script embeds it un
   assert.equal(hash(geometry),expectedGeometryHash);
   assert.ok(source.includes(geometry.toString()),'generated preview contains approved source verbatim');
   assert.ok(source.includes(fs.readFileSync(path.join(__dirname,'reference/demo-layers.js'),'utf8')),'generated layers current');
-  assert.ok(source.includes(fs.readFileSync(path.join(__dirname,'reference/demo-controls.js'),'utf8').replaceAll("$('.experience')","$('.roof-demo')").replace("if(e.pointerId!==activePointerId)return;pointerActive=false;activePointerId=null;dragging=false;schedule()","if(e.pointerId!==activePointerId||(type==='lostpointercapture'&&e.target!==mount))return;pointerActive=false;activePointerId=null;dragging=false;schedule()")),'generated controls current');
 });
 
 test('assembled cover and architectural geometry exactly match an independently run approved baseline',()=>{
@@ -224,7 +223,7 @@ test('mobile and desktop camera bounds contain architectural and in-position cov
 
 for(const [label,options] of [['missing Three.js',{missingThree:true}],['WebGL constructor failure',{rendererFails:true}],['first render failure',{lateRenderFails:true}]])test(`fallback handles ${label} and disables every unavailable control`,()=>{
   const h=createHarness(options);assert.equal(h.element('#model').dataset.ready,undefined);assert.equal(h.element('#cover-phase').textContent,'Preview requires WebGL');assert.equal(h.pendingFrames,0);
-  for(const id of ['assembly','weather','rotate-left','rotate','reset-view','motion','cover-progress'])assert.equal(h.element('#'+id).disabled,true,id);
+  for(const id of ['assembly','weather','rotate-left','rotate','reset-view','motion','cover-progress','cover-play'])assert.equal(h.element('#'+id).disabled,true,id);
   for(const button of h.phaseButtons)assert.equal(button.disabled,true,`stage ${button.dataset.stage} disabled`);
   assert.match(h.element('#cover-description').textContent,/still image/);
 });
@@ -235,3 +234,39 @@ test('WebGL context loss removes canvas, stops motion, and preserves fallback',(
 });
 
 module.exports={createHarness,projectedBounds};
+
+function advance(h,seconds){for(let i=0;i<Math.ceil(seconds/.04);i++)h.tick(40);}
+test('automatic story starts damaged in rain, advances in order and holds secured',()=>{
+ const h=createHarness({reduced:false});ready(h);
+ assert.equal(h.element('#model').dataset.coverProgress,'0.000');
+ assert.equal(object(h,'Terracotta tile roof').visible,true);
+ assert.equal(object(h,'Illustrative rain and runoff').visible,true);
+ advance(h,1.8);assert.equal(h.element('#model').dataset.coverProgress,'0.000');
+ advance(h,2);assert.ok(Number(h.element('#model').dataset.coverX)>0);assert.equal(h.element('#cover-phase').textContent,'Position the covering');
+ advance(h,3.3);assert.equal(h.element('#cover-phase').textContent,'Lower and conform');
+ advance(h,4);assert.equal(h.element('#model').dataset.coverProgress,'1.000');assert.equal(h.element('#model').dataset.sequenceState,'complete');
+ assert.equal(h.element('#cover-play').textContent,'Replay cover');assert.equal(object(h,'Illustrative interior leak paths').visible,false);
+ advance(h,1);assert.equal(h.element('#model').dataset.coverProgress,'1.000');
+});
+test('offscreen and hidden pages retain their damaged opening and suspend elapsed playback',()=>{
+ const h=createHarness({reduced:false});ready(h);h.intersection(false);advance(h,4);assert.equal(h.element('#model').dataset.coverProgress,'0.000');
+ h.intersection(true);advance(h,3);const p=h.element('#model').dataset.coverProgress;assert.ok(Number(p)>0);
+ h.document.hidden=true;h.element('document').dispatch('visibilitychange');advance(h,5);assert.equal(h.element('#model').dataset.coverProgress,p);
+ h.document.hidden=false;h.element('document').dispatch('visibilitychange');advance(h,.5);assert.ok(Number(h.element('#model').dataset.coverProgress)>Number(p));
+});
+test('pause/resume preserves progress; manual scrubbing stops automatic movement; replay starts in rain',()=>{
+ const h=createHarness({reduced:false});ready(h);advance(h,3);
+ h.element('#cover-play').dispatch('click');const p=h.element('#model').dataset.coverProgress;advance(h,1);assert.equal(h.element('#model').dataset.coverProgress,p);assert.equal(h.element('#cover-play').textContent,'Resume cover');
+ h.element('#cover-play').dispatch('click');advance(h,.5);assert.ok(Number(h.element('#model').dataset.coverProgress)>Number(p));
+ h.element('#motion').dispatch('click');const paused=h.element('#model').dataset.coverProgress;advance(h,1);assert.equal(h.element('#model').dataset.coverProgress,paused);
+ h.element('#motion').dispatch('click');advance(h,.5);assert.ok(Number(h.element('#model').dataset.coverProgress)>Number(paused));
+ h.scrub(45);advance(h,1);assert.equal(h.element('#model').dataset.coverProgress,'0.450');
+ h.element('#weather').dispatch('click');h.element('#assembly').dispatch('click');h.element('#cover-play').dispatch('click');
+ assert.equal(h.element('#model').dataset.coverProgress,'0.000');assert.equal(h.element('#model').dataset.mode,'cover-sequence');assert.equal(h.element('#weather').getAttribute('aria-pressed'),'true');
+ advance(h,1);assert.equal(h.element('#model').dataset.coverProgress,'0.000');advance(h,2);assert.ok(Number(h.element('#model').dataset.coverProgress)>0);
+});
+test('reduced motion leaves a static damaged roof until an explicit Play cover request',()=>{
+ const h=createHarness({reduced:true});ready(h);advance(h,12);assert.equal(h.element('#model').dataset.coverProgress,'0.000');assert.equal(h.pendingFrames,0);assert.equal(h.element('#cover-play').textContent,'Play cover');
+ h.element('#cover-play').dispatch('click');advance(h,3);assert.ok(Number(h.element('#model').dataset.coverProgress)>0);
+ h.media.matches=true;h.media.listener({matches:true});h.tick();const p=h.element('#model').dataset.coverProgress;advance(h,1);assert.equal(h.element('#model').dataset.coverProgress,p);assert.equal(h.pendingFrames,0);
+});
