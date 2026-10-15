@@ -14,8 +14,25 @@
 @media(max-width:1000px){.field-film{gap:28px}.film-copy h2{font-size:37px}.film-play{font-size:14px;left:20px;bottom:20px}}
 @media(max-width:760px){.field-film{display:flex;flex-direction:column;gap:28px;align-items:stretch;padding-bottom:0}.film-copy h2{font-size:35px;margin-top:12px}.film-copy>p:not(.eyebrow){max-width:none}.film-topline{top:18px;left:18px;font-size:7px}.film-play{left:18px;bottom:20px;font-size:14px;gap:12px}.play-disc{width:44px;height:44px;font-size:14px}.film-trigger{margin-top:18px;padding:6px 0;font-size:10px}#film-dialog{padding:32px 17px 22px}#film-dialog h2{font-size:26px;margin-bottom:18px}.film-caption{display:block;font-size:9px!important}.film-caption>span{display:block;margin-top:8px}}
 
-/* Two-axis direct manipulation is confined to the 3D stage. */
-.model{touch-action:none}.model-controls{flex-wrap:wrap;gap:6px;padding-left:12px;padding-right:12px}.model-controls button{padding:10px 11px}.model-note{flex-wrap:wrap}.callout{max-width:85%}#model-label{font-size:9px}@media(max-width:370px){.model-controls button{font-size:9px;padding:9px 8px}}
+/* Horizontal model turning preserves native vertical page scrolling. */
+.model{touch-action:pan-y pinch-zoom}.model-controls #rotate-left .icon{transform:scaleX(-1)}.model-controls{flex-wrap:wrap;gap:6px;padding-left:12px;padding-right:12px}.model-controls button{padding:10px 11px}.model-note{flex-wrap:wrap}.callout{max-width:85%}#model-label{font-size:9px}@media(max-width:370px){.model-controls button{font-size:9px;padding:9px 8px}}
+
+/* Keep unavailable model controls hidden when their normal layout uses flex or grid. */
+.model-controls button[hidden],.motion[hidden]{display:none}
 
 /* Preserve the full field film’s original 4:3 framing. */
 .film-preview{aspect-ratio:4/3}#field-video{aspect-ratio:4/3;object-fit:contain}
+
+/* Keep decorative text outside the model's full assembled/exploded viewport. */
+.stage{--model-height:395px;height:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto var(--model-height) auto;grid-template-areas:"heading number" "model model" "caption caption"}
+.model{position:relative;inset:auto;grid-area:model;min-width:0;height:100%}
+.model-title{position:static;grid-area:heading;padding:6px 0 16px 28px}
+.model-number{position:static;grid-area:number;padding:6px 28px 16px 12px}
+.callout{position:static;grid-area:caption;max-width:none;min-width:0;padding:12px 23px;background:#0b1824;border-top:1px solid #263443;color:#d6e6f2;line-height:1.5}
+.callout-line{flex-shrink:0}
+#model-label{font-size:11px;overflow-wrap:anywhere}
+@media(min-width:1500px){.stage{--model-height:440px}}
+@media(max-width:1400px){.stage{--model-height:355px}}
+@media(max-width:1000px){.stage{--model-height:330px}}
+@media(max-width:760px){.stage{--model-height:340px}.model-title{padding-left:23px}.model-number{padding-right:23px}.callout{padding:12px 20px}}
+@media(max-width:370px){.stage{--model-height:290px}.model-title{font-size:25px}}
