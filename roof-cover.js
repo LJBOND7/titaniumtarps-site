@@ -2,10 +2,10 @@
 (() => {
 const $=s=>document.querySelector(s);
 const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
-let paused=motionQuery.matches,visible=true,exploded=false,storm=true,frame=null,modelAvailable=false;
+let paused=motionQuery.matches,visible=false,exploded=false,storm=true,frame=null,modelAvailable=false;
 const motionBtn=$('#motion');
 function reflectMotion(){motionBtn.setAttribute('aria-pressed',String(paused));motionBtn.setAttribute('aria-label',paused?'Play motion':'Pause motion');motionBtn.textContent=paused?'Play motion':'Pause motion';}
-function showModelFallback(){modelAvailable=false;delete $('#model').dataset.ready;$('#model').querySelector('canvas')?.remove();if(frame)cancelAnimationFrame(frame);for(const id of ['assembly','weather','rotate-left','rotate','reset-view','motion','cover-progress']){$('#'+id).disabled=true;}document.querySelectorAll('[data-stage]').forEach(button=>{button.disabled=true;});$('#cover-phase').textContent='Preview requires WebGL';$('#cover-description').textContent='Michael’s approved house is shown as a still image. Open this card in a WebGL-enabled browser.';}
+function showModelFallback(){modelAvailable=false;delete $('#model').dataset.ready;$('#model').querySelector('canvas')?.remove();if(frame)cancelAnimationFrame(frame);for(const id of ['assembly','weather','rotate-left','rotate','reset-view','motion','cover-progress','cover-play']){$('#'+id).disabled=true;}document.querySelectorAll('[data-stage]').forEach(button=>{button.disabled=true;});$('#cover-phase').textContent='Preview requires WebGL';$('#cover-description').textContent='Michael’s approved house is shown as a still image. Open this card in a WebGL-enabled browser.';}
 reflectMotion();
 try {
 if(!window.THREE)throw Error('Three.js unavailable');
@@ -191,6 +191,33 @@ const baseFitCamera=fitCamera;
 fitCamera=function(){const x=membrane.position.x,y=membrane.position.y;membrane.position.x=0;membrane.position.y=(exploded||explodeAmount>.001)?Math.max(y,2.2):1.55;baseFitCamera();membrane.position.x=x;membrane.position.y=y;orbitRoot.updateMatrixWorld(true);};
 mount.dataset.tileCount=String(tileCount);mount.dataset.missingTileCount=String(missingCount);
 
+// Play once when the house is in view. User scrubbing takes over immediately.
+const sequenceButton=$('#cover-play'),DAMAGE_HOLD=2.2,COVER_DURATION=8.4;
+let sequenceState=motionQuery.matches?'idle':'playing',sequenceElapsed=0;
+function reflectSequence(){
+ const playing=sequenceState==='playing'&&!paused;
+ sequenceButton.textContent=playing?'Pause cover':sequenceState==='paused'||sequenceState==='playing'?'Resume cover':sequenceState==='idle'?'Play cover':'Replay cover';
+ sequenceButton.setAttribute('aria-pressed',String(playing));
+ mount.dataset.sequenceState=sequenceState;mount.dataset.sequencePlaying=String(playing);
+}
+function cancelSequence(){sequenceState='manual';sequenceElapsed=0;reflectSequence();}
+function advanceSequence(dt){
+ if(sequenceState!=='playing'||paused||dragging)return;
+ sequenceElapsed+=dt;const next=clamp01((sequenceElapsed-DAMAGE_HOLD)/COVER_DURATION);
+ if(next===coverProgress)return;
+ const phase=currentPose.phase;coverProgress=next;slider.value=String(Math.round(next*100));reflectProgress();
+ if(currentPose.phase!==phase)$('#cover-status').textContent=$('#cover-phase').textContent+'. '+$('#cover-description').textContent;
+ if(next===1){sequenceState='complete';reflectSequence();$('#cover-status').textContent='Cover secured. Replay the sequence or drag the slider to explore each stage.';}
+}
+sequenceButton.addEventListener('click',()=>{
+ if(sequenceState==='playing'&&!paused){sequenceState='paused';reflectSequence();return;}
+ if(sequenceState!=='paused'&&sequenceState!=='playing'){
+  sequenceElapsed=0;setProgress(0,true,true);storm=true;$('#weather').setAttribute('aria-pressed','true');$('.roof-demo').classList.add('storm');
+ }
+ sequenceState='playing';paused=false;reflectMotion();reflectSequence();mount.scrollIntoView({block:'center',behavior:'auto'});schedule();
+});
+reflectSequence();slider.value='0';
+
 const DEFAULT_YAW=.22,YAW_LIMIT=Math.PI/6,YAW_STEP=Math.PI/18;
 const clampYaw=a=>Math.max(DEFAULT_YAW-YAW_LIMIT,Math.min(DEFAULT_YAW+YAW_LIMIT,a));
 let targetAngle=DEFAULT_YAW,dragging=false,pointerActive=false,activePointerId=null,startX=0,startY=0,startAngle=0,lastTime=0,explodeAmount=0,autoAngle=0,autoPhase=0;
@@ -199,11 +226,11 @@ function draw(){if(modelAvailable)renderer.render(scene,camera)}
 function apply(){const yaw=clampYaw(targetAngle+autoAngle);orbitRoot.rotation.set(0,yaw,0,'YXZ');const inspecting=exploded||explodeAmount>.001;tiles.visible=!inspecting&&coverProgress<.98;trusses.position.y=explodeAmount*.3;trusses.visible=inspecting&&explodeAmount>.001;if(inspecting){morphCover(1);membrane.position.set(0,explodeAmount*2.2,0);membrane.visible=true;wrap.opacity=1;flatSheet.visible=false;}else{morphCover(Math.max(.03,currentPose.conform));membrane.position.set(currentPose.x,currentPose.lift,0);membrane.visible=currentPose.conform>.001;wrap.opacity=smooth(currentPose.conform/.18);flatSheet.position.set(currentPose.x+.55,4.50+currentPose.lift,-.05);flatSheet.visible=coverProgress>.005&&currentPose.conform<.18;flatMaterial.opacity=1-smooth(currentPose.conform/.18);}
  effects.visible=storm&&!inspecting;leaks.visible=storm&&!inspecting&&currentPose.leak>.001;leakMat.opacity=.8*currentPose.leak;runoff.visible=storm&&!inspecting&&currentPose.secured>.001;runoffMat.opacity=.85*currentPose.secured;secureMarkers.visible=!inspecting&&currentPose.secured>.001;secureMaterial.opacity=currentPose.secured;
  mount.dataset.rotationYaw=yaw.toFixed(3);mount.dataset.rotationTilt='0.000';mount.dataset.coverProgress=coverProgress.toFixed(3);mount.dataset.coverX=membrane.position.x.toFixed(3);mount.dataset.coverLift=membrane.position.y.toFixed(3);mount.dataset.coverConform=lastMorph.toFixed(3);mount.dataset.leakIntensity=inspecting?'0.000':currentPose.leak.toFixed(3);mount.dataset.mode=inspecting?'exploded':'cover-sequence';if(modelAvailable)fitCamera();draw();}
-function animate(now=0){frame=null;if(!modelAvailable||!visible||document.hidden)return;const dt=Math.min((now-lastTime)/1000||0,.04);lastTime=now;if(!paused&&!dragging){autoPhase+=dt*.18;autoAngle=Math.sin(autoPhase)*.055}const target=exploded?1:0;if(paused||motionQuery.matches)explodeAmount=target;else explodeAmount+=(target-explodeAmount)*.065;if(storm&&!paused)updateWeather(dt);apply();if(!paused||Math.abs(explodeAmount-target)>.001)frame=requestAnimationFrame(animate)}
+function animate(now=0){frame=null;if(!modelAvailable||!visible||document.hidden)return;const dt=Math.min((now-lastTime)/1000||0,.04);lastTime=now;if(!paused&&!dragging){autoPhase+=dt*.18;autoAngle=Math.sin(autoPhase)*.055}const target=exploded?1:0;if(paused||motionQuery.matches)explodeAmount=target;else explodeAmount+=(target-explodeAmount)*.065;if(storm&&!paused)updateWeather(dt);advanceSequence(dt);apply();if(!paused||Math.abs(explodeAmount-target)>.001)frame=requestAnimationFrame(animate)}
 function schedule(){if(!modelAvailable)return;if(frame===null||frame===undefined){lastTime=performance.now();frame=requestAnimationFrame(animate)}}
-function manual(){targetAngle=clampYaw(targetAngle+autoAngle);autoAngle=0;autoPhase=0;paused=true;reflectMotion();}
+function manual(){cancelSequence();targetAngle=clampYaw(targetAngle+autoAngle);autoAngle=0;autoPhase=0;paused=true;reflectMotion();reflectSequence();}
 function resetView(){targetAngle=DEFAULT_YAW;autoAngle=0;autoPhase=0;orbitRoot.position.y=1.5;apply();}
-function setProgress(value,announce=false){if(!modelAvailable)return;coverProgress=clamp01(Number(value)/100||0);slider.value=String(Math.round(coverProgress*100));exploded=false;explodeAmount=0;$('#assembly').setAttribute('aria-pressed','false');reflectProgress(announce);apply();}
+function setProgress(value,announce=false,automatic=false){if(!modelAvailable)return;if(!automatic)cancelSequence();coverProgress=clamp01(Number(value)/100||0);slider.value=String(Math.round(coverProgress*100));exploded=false;explodeAmount=0;$('#assembly').setAttribute('aria-pressed','false');reflectProgress(announce);apply();}
 slider.addEventListener('input',e=>setProgress(e.target.value));slider.addEventListener('change',()=>reflectProgress(true));
 document.querySelectorAll('[data-stage]').forEach(button=>button.addEventListener('click',()=>setProgress(button.dataset.stage,true)));
 mount.addEventListener('pointerdown',e=>{if((e.pointerType==='mouse'&&e.button!==0)||e.isPrimary===false||activePointerId!==null)return;activePointerId=e.pointerId;pointerActive=true;dragging=false;startX=e.clientX;startY=e.clientY;});
@@ -212,10 +239,10 @@ mount.addEventListener('pointerleave',e=>{if(e.pointerId===activePointerId&&!dra
 ['pointerup','pointercancel','lostpointercapture'].forEach(type=>mount.addEventListener(type,e=>{if(e.pointerId!==activePointerId||(type==='lostpointercapture'&&e.target!==mount))return;pointerActive=false;activePointerId=null;dragging=false;schedule()}));
 mount.addEventListener('keydown',e=>{if(['ArrowRight','ArrowLeft','Home'].includes(e.key)){e.preventDefault();manual();if(e.key==='Home'){resetView();return;}targetAngle=clampYaw(targetAngle+(e.key==='ArrowRight'?1:-1)*Math.PI/36);apply();}});
 $('#rotate-left').addEventListener('click',()=>{manual();targetAngle=clampYaw(targetAngle-YAW_STEP);apply()});$('#rotate').addEventListener('click',()=>{manual();targetAngle=clampYaw(targetAngle+YAW_STEP);apply()});$('#reset-view').addEventListener('click',()=>{manual();resetView()});
-$('#assembly').addEventListener('click',()=>{exploded=!exploded;$('#assembly').setAttribute('aria-pressed',String(exploded));reflectProgress();$('#cover-status').textContent=exploded?'Exploded inspection. Scrub the slider to return to the covering sequence.':'Covering sequence restored.';if(paused){explodeAmount=exploded?1:0;apply()}else schedule()});
+$('#assembly').addEventListener('click',()=>{cancelSequence();exploded=!exploded;$('#assembly').setAttribute('aria-pressed',String(exploded));reflectProgress();$('#cover-status').textContent=exploded?'Exploded inspection. Scrub the slider to return to the covering sequence.':'Covering sequence restored.';if(paused){explodeAmount=exploded?1:0;apply()}else schedule()});
 $('#weather').addEventListener('click',()=>{storm=!storm;$('#weather').setAttribute('aria-pressed',String(storm));$('.roof-demo').classList.toggle('storm',storm);apply();schedule()});
-motionBtn.addEventListener('click',()=>{paused=!paused;reflectMotion();schedule()});motionQuery.addEventListener('change',e=>{paused=e.matches;reflectMotion();schedule()});
-new ResizeObserver(size).observe(mount);new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)schedule();else if(frame){cancelAnimationFrame(frame);frame=null}},{rootMargin:'100px'}).observe(mount);
+motionBtn.addEventListener('click',()=>{paused=!paused;reflectMotion();reflectSequence();schedule()});motionQuery.addEventListener('change',e=>{paused=e.matches;reflectMotion();reflectSequence();schedule()});
+new ResizeObserver(size).observe(mount);new IntersectionObserver(entries=>{visible=entries[0].isIntersecting&&(entries[0].intersectionRatio??1)>=.35;if(visible)schedule();else if(frame){cancelAnimationFrame(frame);frame=null}},{rootMargin:'0px',threshold:[0,.35]}).observe(mount);
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&frame){cancelAnimationFrame(frame);frame=null}else schedule()});renderer.domElement.addEventListener('webglcontextlost',e=>{e.preventDefault();showModelFallback()});
 reflectProgress();$('.roof-demo').classList.toggle('storm',storm);size();schedule();
 
