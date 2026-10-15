@@ -133,6 +133,8 @@
 </script>
 
 <link rel="stylesheet" href="titarps-story.css?v=20261014-film"><script defer src="titarps-story.js?v=20261013-story"></script>
+<link rel="stylesheet" href="roof-cover.css?v=20261015-slider">
+<script defer src="larry-three.min.js"></script><script defer src="roof-cover.js?v=20261015-slider"></script>
 </head>
 <body>
 
@@ -375,6 +377,68 @@
   </div>
 </section>
 
+
+<!-- ========== Section: Interactive roof-cover sequence ========== -->
+<section class="roof-showcase" aria-labelledby="roof-showcase-heading">
+  <div class="container">
+    <div class="roof-showcase-intro">
+      <p class="eyebrow eyebrow--center eyebrow--blue">EXPLORE THE COVER SEQUENCE</p>
+      <h2 class="h-display h-display--center" id="roof-showcase-heading">See a roof cover take shape.</h2>
+      <p>Move from damaged tile to a fitted covering. Drag the slider in either direction and explore the house from side to side.</p>
+    </div>
+<div class="roof-demo" aria-label="Interactive roof-cover demonstration">
+      <div class="model-stage">
+        <div class="stage-header">
+          <span class="model-badge"><span class="status-dot" aria-hidden="true"></span><span id="model-label">Damaged tile roof</span></span>
+          <span class="illustration-tag">MARKETING VISUALIZATION</span>
+        </div>
+        <div id="model" tabindex="0" aria-label="Interactive upright house model. Drag horizontally or use the rotate buttons to look around. Use the roof-cover slider below to explore the installation.">
+          <img class="initial-fallback" src="assets/img/house/michael-wrapped-house.jpg" alt="Reference view of a house with a white fitted roof cover">
+        </div>
+        <div class="model-toolbar" role="group" aria-label="Model controls">
+          <div class="toolbar-group">
+            <button id="assembly" type="button" aria-pressed="false" title="Toggle exploded view">Explode view</button>
+            <button id="weather" type="button" aria-pressed="true" title="Toggle illustrative rain">Rain</button>
+          </div>
+          <div class="toolbar-group view-controls">
+            <button id="rotate-left" class="icon-button" type="button" aria-label="Rotate left" title="Rotate left">↶</button>
+            <button id="rotate" class="icon-button" type="button" aria-label="Rotate right" title="Rotate right">↷</button>
+            <button id="reset-view" type="button" title="Reset model view">Reset view</button>
+            <button id="motion" class="icon-button" type="button" aria-label="Pause motion" aria-pressed="false" title="Pause motion">Ⅱ</button>
+          </div>
+        </div>
+      </div>
+      <div class="cover-panel">
+        <div class="phase-summary">
+          <div class="phase-copy">
+            <p class="eyebrow">THE COVER SEQUENCE</p>
+            <h2 id="cover-phase">Damaged roof</h2>
+            <p id="cover-description">Broken tiles expose illustrative leak paths. Move the slider left to bring the Titanium cover over the roof.</p>
+          </div>
+          <div class="progress-readout"><span id="cover-percentage">0%</span><span>SEQUENCE</span></div>
+        </div>
+        <div class="slider-heading">
+          <label for="cover-progress"><span aria-hidden="true">←</span> Drag left to cover the roof</label>
+          <span class="scrub-note" id="scrub-note">Scrub either way to revisit any stage.</span>
+        </div>
+        <div class="range-wrap">
+          <input id="cover-progress" type="range" min="0" max="100" value="0" step="1" dir="rtl" aria-describedby="scrub-note cover-description" aria-label="Roof cover sequence. Drag left to advance from damaged to secured.">
+        </div>
+        <div class="phase-buttons" role="group" aria-label="Jump to a cover stage">
+          <button type="button" data-stage="0" aria-pressed="true"><span>01</span> Damaged</button>
+          <button type="button" data-stage="45" aria-pressed="false"><span>02</span> Position</button>
+          <button type="button" data-stage="66" aria-pressed="false"><span>03</span> Lower</button>
+          <button type="button" data-stage="100" aria-pressed="false"><span>04</span> Secure</button>
+        </div>
+        <p id="cover-status" class="cover-status" role="status" aria-live="polite" aria-atomic="true">Illustrative rain and leak paths are shown.</p>
+      </div>
+    <footer class="model-note">
+      <p><span>Drag the house left or right to look around. The view stays upright.</span> Rain, interior leak paths, and runoff are illustrative.</p>
+      <p class="disclaimer">Illustrative marketing visualization. Installation and protection depend on site conditions and professional assessment; this is not a performance guarantee.</p>
+    </footer>
+</div>
+  </div>
+</section>
 
 <!-- ========== Section: Before / after sliders ========== -->
 <section class="ba-section" id="before-after">
